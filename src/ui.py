@@ -419,8 +419,10 @@ class QRSVWindow(QtWidgets.QMainWindow):
             if self.edit_config_widget.isVisible():
                 self.toggle_edit_config()
             self.bar_widget.hide()
+            self.gl_widget.renderer.show_phys_hud = False
         else:
             self.bar_widget.show()
+            self.gl_widget.renderer.show_phys_hud = True
 
     def toggle_edit_config(self):
         if not self.edit_config_widget.isVisible():

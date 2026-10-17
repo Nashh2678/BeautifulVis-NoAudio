@@ -1167,6 +1167,8 @@ class RSVRenderer:
         self.text_vbo = self.ctx.buffer(reserve=6 * 4 * 4 * 16, dynamic=True)
         self.text_vao = self.ctx.vertex_array(self.prog_text, [(self.text_vbo, "2f 2f", "in_pos", "in_uv")])
         self._digit_tex, self._digit_metrics = self._build_digit_atlas()
+        self.show_phys_hud = True       # H (with the top-left panel); drawn by phys_hud.PhysHud
+        self._phys_hud = None
         self._gpu_query = self.ctx.query(time=True) if PERF and os.environ.get("RSV_PERF") != "2" else None   # 2 = no GPU timer (it syncs CPU+GPU)
 
         # (Octane.obj / Ball.obj are no longer drawn -- replaced by Octane_RL.npz + the procedural ball --
@@ -3172,6 +3174,11 @@ class RSVRenderer:
                 self.render_boost_hud(width, height, spectated_car.boost_amount, spectated_car.team_num)
         self.render_pai_hud(width, height, getattr(state_manager, "gail_hud", None))
         self.render_scoreboard_hud(width, height, getattr(state_manager, "scoreboard", None))
+        if self.show_phys_hud:
+            if self._phys_hud is None:
+                from phys_hud import PhysHud
+                self._phys_hud = PhysHud(self.ctx)
+            self._phys_hud.render(self.render_target, state, interp_ratio, spectated, width, height)
         self.render_goal_banner(width, height, state)
         self.render_clip_indicator(width, height)
 
