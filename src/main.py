@@ -3174,7 +3174,7 @@ class RSVRenderer:
                 self.render_boost_hud(width, height, spectated_car.boost_amount, spectated_car.team_num)
         self.render_pai_hud(width, height, getattr(state_manager, "gail_hud", None))
         self.render_scoreboard_hud(width, height, getattr(state_manager, "scoreboard", None))
-        if self.show_phys_hud:
+        if self.show_phys_hud and self.window_mode:   # live window only: clips (offline render) never carry the physics overlay
             if self._phys_hud is None:
                 from phys_hud import PhysHud
                 self._phys_hud = PhysHud(self.ctx)
