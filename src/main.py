@@ -1167,7 +1167,7 @@ class RSVRenderer:
         self.text_vbo = self.ctx.buffer(reserve=6 * 4 * 4 * 16, dynamic=True)
         self.text_vao = self.ctx.vertex_array(self.prog_text, [(self.text_vbo, "2f 2f", "in_pos", "in_uv")])
         self._digit_tex, self._digit_metrics = self._build_digit_atlas()
-        self.show_phys_hud = True       # H (with the top-left panel); drawn by phys_hud.PhysHud
+        self.show_phys_hud = bool(_read_settings().get("hud_visible", True))   # H (with the top-left panel, remembered across runs); drawn by phys_hud.PhysHud
         self._phys_hud = None
         self._gpu_query = self.ctx.query(time=True) if PERF and os.environ.get("RSV_PERF") != "2" else None   # 2 = no GPU timer (it syncs CPU+GPU)
 

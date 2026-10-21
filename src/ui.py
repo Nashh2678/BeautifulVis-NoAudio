@@ -354,6 +354,8 @@ class QRSVWindow(QtWidgets.QMainWindow):
         self.edit_config_widget = QEditConfigWidget(self.gl_widget.config)
         self.layout().addWidget(self.edit_config_widget)
         self.edit_config_widget.hide()
+        if not Config._load().get("hud_visible", True):    # H state is remembered across runs
+            self.bar_widget.hide()
 
         self.resize(WINDOW_SIZE_X, WINDOW_SIZE_Y)
         # No window-size cap: the window can be dragged to any size. The 1080p cap is on the actual
@@ -423,6 +425,21 @@ class QRSVWindow(QtWidgets.QMainWindow):
         else:
             self.bar_widget.show()
             self.gl_widget.renderer.show_phys_hud = True
+        self._save_hud_visible(self.bar_widget.isVisible())
+
+    @staticmethod
+    def _save_hud_visible(visible):
+        """Remember the H (HUD shown / hidden) state in rsv_settings.json."""
+        import json, os
+        from config import SETTINGS_PATH
+        cur = Config._load()
+        cur["hud_visible"] = bool(visible)
+        try:
+            with open(SETTINGS_PATH + ".tmp", "w", encoding="utf-8") as f:
+                json.dump(cur, f, indent=1)
+            os.replace(SETTINGS_PATH + ".tmp", SETTINGS_PATH)
+        except OSError:
+            pass
 
     def toggle_edit_config(self):
         if not self.edit_config_widget.isVisible():
